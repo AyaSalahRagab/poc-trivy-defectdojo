@@ -1,4 +1,4 @@
-name: Trivy Security Scan
+name: Trivy → DefectDojo POC
 
 on:
   push:
@@ -13,27 +13,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Trivy scan
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          format: json
-          output: trivy-report.json
-          severity: CRITICAL,HIGH,MEDIUM,LOW
-          ignore-unfixed: true
+      - name: Run Trivy scan via Central Trivy Server
+        run: |
+          trivy fs \
+            --server http://EC2_PUBLIC_IP:4954 \
+            --format json \
+            --output trivy-report.json \
+            .
 
       - name: Upload results to DefectDojo
         env:
           DOJO_URL: ${{ secrets.DOJO_URL }}
-          DOJO_TOKEN: ${{ secrets.DOJO_API_KEY }}
+          DOJO_API_KEY: ${{ secrets.DOJO_API_KEY }}
         run: |
           curl -X POST "$DOJO_URL/api/v2/import-scan/" \
-            -H "Authorization: Token $DOJO_TOKEN" \
-            -H "Accept: application/json" \
+            -H "Authorization: Token $DOJO_API_KEY" \
             -F "scan_type=Trivy Scan" \
             -F "file=@trivy-report.json" \
             -F "product_name=DevSecOps-POC" \
-            -F "engagement_name=Trivy-POC" \
-            -F "verified=true" \
-            -F "active=true"
+            -F "engagement_name=GitHub-Trivy"
