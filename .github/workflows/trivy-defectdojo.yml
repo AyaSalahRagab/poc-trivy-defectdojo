@@ -16,7 +16,7 @@ jobs:
       - name: Run Trivy scan via Central Trivy Server
         run: |
           trivy fs \
-            --server http://EC2_PUBLIC_IP:4954 \
+            --server http://13.48.57.189:4954 \
             --format json \
             --output trivy-report.json \
             .
