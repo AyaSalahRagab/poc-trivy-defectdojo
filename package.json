@@ -1,8 +1,8 @@
 {
-  "name": "trivy-defectdojo-poc",
+  "name": "vuln-demo",
   "version": "1.0.0",
-  "description": "POC project for Trivy + DefectDojo",
   "dependencies": {
-    "lodash": "4.17.19"
+    "lodash": "4.17.11"
   }
 }
+
